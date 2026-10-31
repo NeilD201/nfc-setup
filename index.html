@@ -4,9 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b1020">
-  <meta name="description" content="Write a destination URL to an NFC tag from your phone.">
-  <title>TapLink — NFC setup</title>
+  <meta name="description" content="Set up a Watchmen NFC tag with a destination link.">
+  <title>Watchmen — NFC link setup</title>
   <style>
+    :root { --watchmen-gold: #f5c45c; --watchmen-ink: #08090d; }
     :root {
       color-scheme: dark;
       --bg: #080b16;
@@ -38,9 +39,9 @@
     .shell { width: min(100% - 32px, 1080px); margin: auto; }
     header { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; }
     .brand { display: inline-flex; gap: 10px; align-items: center; color: var(--text); text-decoration: none; font-weight: 800; letter-spacing: -.03em; }
-    .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 8px 24px rgba(139, 124, 255, .3); }
+    .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: linear-gradient(135deg, var(--watchmen-gold), #d58b2e); box-shadow: 0 8px 24px rgba(245, 196, 92, .28); }
     .brand-mark svg { width: 20px; }
-    .eyebrow { color: #b7adff; font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .eyebrow { color: var(--watchmen-gold); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
     main { padding: 44px 0 72px; }
     .hero { max-width: 720px; margin-bottom: 34px; }
     h1 { max-width: 680px; margin: 12px 0 18px; font-size: clamp(2.55rem, 8vw, 5rem); line-height: .98; letter-spacing: -.065em; }
@@ -53,7 +54,7 @@
     .input-row { display: flex; gap: 10px; }
     input[type="url"] { width: 100%; min-width: 0; padding: 15px 16px; border: 1px solid rgba(255,255,255,.18); border-radius: 14px; outline: none; color: var(--text); background: rgba(7, 10, 23, .62); transition: border .2s, box-shadow .2s; }
     input[type="url"]:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(139, 124, 255, .16); }
-    button { border: 0; border-radius: 14px; padding: 14px 18px; color: #fff; background: linear-gradient(135deg, #8576ff, #6554dc); font-weight: 800; transition: transform .2s, filter .2s, opacity .2s; }
+    button { border: 0; border-radius: 14px; padding: 14px 18px; color: #17120a; background: linear-gradient(135deg, #f5c45c, #d58b2e); font-weight: 800; transition: transform .2s, filter .2s, opacity .2s; }
     button:hover { filter: brightness(1.08); transform: translateY(-1px); }
     button:disabled { cursor: not-allowed; opacity: .48; transform: none; }
     .secondary { color: #e6e8f7; background: rgba(255,255,255,.08); border: 1px solid var(--line); }
@@ -99,28 +100,28 @@
 <body>
   <div class="shell">
     <header>
-      <a class="brand" href="./" aria-label="TapLink home">
+      <a class="brand" href="./" aria-label="Watchmen NFC setup">
         <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 8a7 7 0 0 1 10 0M4.5 5.5a10.5 10.5 0 0 1 15 0M9.5 10.5a3.5 3.5 0 0 1 5 0M12 14v7"/></svg></span>
-        <span>TapLink</span>
+        <span>WATCHMEN</span>
       </a>
-      <span class="eyebrow">NFC setup</span>
+      <span class="eyebrow">NFC LINK SETUP</span>
     </header>
 
     <main>
       <section class="hero">
-        <div class="eyebrow">One tap away</div>
-        <h1>Give your tag a destination.</h1>
-        <p>Enter a link, bring your NFC tag close, and write it in seconds. No account, no app needed on supported Android browsers.</p>
+        <div class="eyebrow">Watchmen field setup</div>
+        <h1>Make every tap count.</h1>
+        <p>Set the link behind your Watchmen NFC tag. Enter a destination below, then write it directly from Android—or follow the simple NFC Tools steps on iPhone.</p>
       </section>
 
       <div class="layout">
         <section class="card">
-          <h2>Choose your link</h2>
-          <p class="card-intro">This is the page your NFC tag will open when someone taps it.</p>
+          <h2>Choose the destination</h2>
+          <p class="card-intro">This is the page your NFC tag will open when someone taps it. Use LinkedIn, your website, a campaign page, or any secure web link.</p>
           <label for="destination">Destination URL</label>
           <div class="input-row">
             <input id="destination" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com" value="https://">
-            <button id="validateButton" type="button">Check link</button>
+            <button id="validateButton" type="button">Use this link</button>
           </div>
           <div id="validation" class="validation" aria-live="polite"></div>
           <div class="actions">
@@ -142,23 +143,29 @@
               <div class="step"><div class="step-number">2</div><div><strong>Tap “Write to NFC tag”</strong><span>Allow NFC access if your browser asks.</span></div></div>
               <div class="step"><div class="step-number">3</div><div><strong>Hold your tag near your phone</strong><span>Keep it still until you see confirmation.</span></div></div>
             </div>
-            <p class="note" style="margin-top:24px">Best supported in Chrome on Android. NFC must be switched on.</p>
+            <p class="note" style="margin-top:24px">Best supported in Chrome on Android. Make sure NFC is switched on.</p>
+            <p class="note">Need an app? <a href="https://play.google.com/store/apps/details?id=com.wakdev.wdnfc" target="_blank" rel="noreferrer">Get NFC Tools for Android</a>.</p>
           </div>
 
           <div id="iosPanel" class="ios-panel">
             <div class="platform-badge">● iPhone / iPad</div>
-            <h2>Finish in an NFC app</h2>
-            <p class="card-intro">iOS browsers can’t write NFC tags directly from a webpage. Copy your link below, then paste it into an NFC-writing app such as NFC Tools.</p>
+            <h2>Write with NFC Tools</h2>
+            <p class="card-intro">Safari can’t write the tag directly. Download NFC Tools, then use the link you entered here.</p>
             <div class="copy-box"><span id="copyValue">https://</span><button id="copyButton" type="button">Copy</button></div>
+            <div class="steps">
+              <div class="step"><div class="step-number">1</div><div><strong>Download NFC Tools</strong><span><a href="https://apps.apple.com/us/app/nfc-tools/id1252962749" target="_blank" rel="noreferrer">Open it in the App Store</a>.</span></div></div>
+              <div class="step"><div class="step-number">2</div><div><strong>Tap Write</strong><span>Open NFC Tools and choose the Write tab.</span></div></div>
+              <div class="step"><div class="step-number">3</div><div><strong>Add a record</strong><span>Tap Add a record, then choose Social Network for LinkedIn, or URL / Web link for any other destination.</span></div></div>
+              <div class="step"><div class="step-number">4</div><div><strong>Tap Write, then scan</strong><span>Tap Write and hold the NFC tag near the top of your iPhone when the app asks.</span></div></div>
+            </div>
             <button id="iosTestButton" class="secondary" type="button" disabled>Open link to test</button>
-            <p class="note" style="margin-top:18px">In your NFC app, choose a URL or web link record, paste this address, and tap “Write”.</p>
           </div>
 
           <div id="unsupportedPanel" class="unsupported-panel">
             <div class="platform-badge">◇ Browser check</div>
-            <h2>Almost ready</h2>
-            <p class="card-intro">This browser or device can’t access NFC writing from the web. If you’re on Android, open this page in the latest Chrome, turn on NFC, and try again.</p>
-            <p class="note">You can still use the link above with an NFC-writing app.</p>
+            <h2>Use Chrome on Android</h2>
+            <p class="card-intro">This browser can’t write NFC tags directly. On Android, open this page in the latest Chrome and make sure NFC is switched on.</p>
+            <p class="note">Or use <a href="https://play.google.com/store/apps/details?id=com.wakdev.wdnfc" target="_blank" rel="noreferrer">NFC Tools for Android</a> to write your link.</p>
           </div>
         </aside>
       </div>
@@ -216,7 +223,7 @@
         testButton.disabled = false;
         iosTestButton.disabled = false;
         copyValue.textContent = url;
-        setStatus("Ready to write", "Your destination is valid. You can test it or write it to a tag.", "ready");
+        setStatus("Ready to write", "Your destination is valid. Test it first or write it to your Watchmen tag.", "ready");
       } else {
         writeButton.disabled = true;
         testButton.disabled = true;
