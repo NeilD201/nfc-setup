@@ -3,310 +3,269 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1020">
-  <meta name="description" content="Set up a Watchmen NFC tag with a destination link.">
-  <title>Watchmen — NFC link setup</title>
+  <meta name="theme-color" content="#10120f">
+  <meta name="description" content="Set up a Watchmen NFC tag.">
+  <title>Watchmen NFC Setup</title>
   <style>
-    :root { --watchmen-gold: #f5c45c; --watchmen-ink: #08090d; }
     :root {
       color-scheme: dark;
-      --bg: #080b16;
-      --panel: rgba(18, 24, 45, .82);
-      --panel-strong: #151c35;
-      --line: rgba(255, 255, 255, .12);
-      --text: #f5f7ff;
-      --muted: #a8b0ca;
-      --accent: #8b7cff;
-      --accent-2: #45d6c8;
-      --danger: #ff8c9a;
-      --shadow: 0 24px 80px rgba(0, 0, 0, .34);
+      --bg: #10120f;
+      --surface: #181a16;
+      --surface-raised: #1d201b;
+      --line: #34372e;
+      --text: #f0f0e9;
+      --muted: #a4a69b;
+      --accent: #d8bb72;
+      --accent-ink: #17160f;
+      --success: #9fc99f;
+      --error: #ed9b91;
     }
 
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-width: 320px;
+      background: var(--bg);
       color: var(--text);
-      background:
-        radial-gradient(circle at 15% 0%, rgba(198, 148, 54, .16), transparent 34rem),
-        radial-gradient(circle at 100% 30%, rgba(135, 142, 164, .08), transparent 28rem),
-        var(--bg);
-      font: 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-
     button, input { font: inherit; }
     button { cursor: pointer; }
-    .shell { width: min(100% - 32px, 1080px); margin: auto; }
-    header { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; }
-    .brand { display: inline-flex; gap: 10px; align-items: center; color: var(--text); text-decoration: none; font-weight: 800; letter-spacing: -.03em; }
-    .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: linear-gradient(135deg, var(--watchmen-gold), #d58b2e); box-shadow: 0 8px 24px rgba(245, 196, 92, .28); }
-    .brand-mark svg { width: 20px; }
-    .eyebrow { color: var(--watchmen-gold); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
-    main { padding: 44px 0 72px; }
-    .hero { max-width: 720px; margin-bottom: 34px; }
-    h1 { max-width: 680px; margin: 12px 0 18px; font-size: clamp(2.55rem, 8vw, 5rem); line-height: .98; letter-spacing: -.065em; }
-    .hero p { max-width: 580px; margin: 0; color: var(--muted); font-size: 1.12rem; }
-    .platform-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 20px; }
-    .platform-choice { width: 100%; padding: 15px 18px; border: 1px solid var(--line); border-radius: 15px; color: var(--muted); background: rgba(255,255,255,.045); text-align: left; }
-    .platform-choice strong { display: block; color: var(--text); font-size: 1rem; }
-    .platform-choice span { display: block; margin-top: 2px; font-size: .82rem; font-weight: 500; }
-    .platform-choice[aria-pressed="true"] { border-color: var(--watchmen-gold); background: rgba(245,196,92,.1); box-shadow: inset 0 0 0 1px rgba(245,196,92,.15); }
-    .platform-panel { display: none; }
-    .platform-panel.active { display: block; }
-    .layout { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr); gap: 22px; align-items: start; }
-    .card { padding: clamp(22px, 4vw, 34px); border: 1px solid var(--line); border-radius: 26px; background: var(--panel); box-shadow: var(--shadow); backdrop-filter: blur(18px); }
-    .card h2 { margin: 0 0 8px; font-size: 1.35rem; letter-spacing: -.025em; }
-    .card-intro { margin: 0 0 24px; color: var(--muted); }
-    label { display: block; margin-bottom: 9px; color: #dce1f5; font-size: .9rem; font-weight: 700; }
-    .input-row { display: flex; gap: 10px; }
-    input[type="url"] { width: 100%; min-width: 0; padding: 15px 16px; border: 1px solid rgba(255,255,255,.18); border-radius: 14px; outline: none; color: var(--text); background: rgba(7, 10, 23, .62); transition: border .2s, box-shadow .2s; }
-    input[type="url"]:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(139, 124, 255, .16); }
-    button { border: 0; border-radius: 14px; padding: 14px 18px; color: #17120a; background: linear-gradient(135deg, #f5c45c, #d58b2e); font-weight: 800; transition: transform .2s, filter .2s, opacity .2s; }
-    button:hover { filter: brightness(1.08); transform: translateY(-1px); }
-    button:disabled { cursor: not-allowed; opacity: .48; transform: none; }
-    .secondary { color: #e6e8f7; background: rgba(255,255,255,.08); border: 1px solid var(--line); }
-    .validation { min-height: 25px; margin-top: 9px; color: var(--danger); font-size: .86rem; }
-    .validation.valid { color: var(--accent-2); }
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
-    .actions button { flex: 1 1 170px; }
-    .status { display: flex; gap: 14px; align-items: flex-start; margin-top: 24px; padding: 15px; border-radius: 16px; background: rgba(255,255,255,.055); }
-    .status-icon { flex: 0 0 auto; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #0d1223; background: var(--accent-2); font-weight: 900; }
-    .status h3 { margin: 0 0 2px; font-size: .97rem; }
-    .status p { margin: 0; color: var(--muted); font-size: .9rem; }
-    .status[data-tone="error"] .status-icon { background: var(--danger); }
-    .status[data-tone="working"] .status-icon { color: #fff; background: var(--accent); animation: pulse 1.4s infinite; }
-    @keyframes pulse { 50% { box-shadow: 0 0 0 8px rgba(139,124,255,.14); } }
-    .steps { display: grid; gap: 15px; margin-top: 24px; }
-    .step { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; }
-    .step-number { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid rgba(245,196,92,.4); border-radius: 10px; color: var(--watchmen-gold); background: rgba(245,196,92,.1); font-weight: 800; }
-    .step strong { display: block; margin-top: 3px; font-size: .95rem; }
-    .step span { display: block; color: var(--muted); font-size: .88rem; }
-    .platform-badge { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 18px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 99px; color: #dfe4fb; background: rgba(255,255,255,.06); font-size: .78rem; font-weight: 800; }
-    .copy-box { display: flex; gap: 8px; margin: 20px 0 16px; padding: 5px 5px 5px 13px; border: 1px solid var(--line); border-radius: 13px; background: rgba(0,0,0,.18); }
-    .copy-box span { min-width: 0; overflow: hidden; align-self: center; color: #dce1f5; font-size: .84rem; text-overflow: ellipsis; white-space: nowrap; }
-    .copy-box button { flex: 0 0 auto; padding: 9px 12px; font-size: .82rem; }
-    .note { color: var(--muted); font-size: .85rem; }
-    .note a, .status a { color: #c6beff; }
-    footer { padding: 0 0 28px; color: #717a98; font-size: .8rem; text-align: center; }
-    @media (max-width: 760px) {
-      header { padding-top: 16px; }
-      main { padding-top: 28px; }
-      .layout { grid-template-columns: 1fr; }
-      .card { border-radius: 22px; }
+    a { color: var(--accent); text-underline-offset: 3px; }
+    .wrap { width: min(100% - 36px, 760px); margin: 0 auto; }
+    header { height: 68px; display: flex; align-items: center; border-bottom: 1px solid var(--line); }
+    .wordmark { font-size: .9rem; font-weight: 750; letter-spacing: .14em; }
+    .header-label { margin-left: auto; color: var(--muted); font-size: .82rem; }
+    main { padding: 58px 0 72px; }
+    h1 { margin: 0; font-size: clamp(2rem, 6vw, 3rem); line-height: 1.12; letter-spacing: -.045em; font-weight: 650; }
+    .intro { margin: 12px 0 32px; color: var(--muted); }
+    .platforms { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 5px; border: 1px solid var(--line); border-radius: 12px; background: #141612; }
+    .platform-tab { min-height: 48px; border: 1px solid transparent; border-radius: 8px; color: var(--muted); background: transparent; font-size: .94rem; font-weight: 650; }
+    .platform-tab[aria-selected="true"] { border-color: #4b493c; color: var(--text); background: var(--surface-raised); }
+    .setup { margin-top: 16px; padding: clamp(20px, 5vw, 32px); border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+    .section-title { margin: 0 0 5px; font-size: 1.08rem; font-weight: 650; }
+    .section-copy { margin: 0 0 22px; color: var(--muted); font-size: .92rem; }
+    label { display: block; margin-bottom: 8px; font-size: .88rem; font-weight: 600; }
+    .url-entry { display: flex; gap: 9px; }
+    input[type="url"] { flex: 1; min-width: 0; height: 48px; padding: 0 13px; border: 1px solid #44463d; border-radius: 8px; outline: none; color: var(--text); background: #11130f; }
+    input[type="url"]:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(216,187,114,.16); }
+    .button { min-height: 46px; padding: 0 16px; border: 1px solid transparent; border-radius: 8px; color: var(--accent-ink); background: var(--accent); font-size: .91rem; font-weight: 700; }
+    .button:hover:not(:disabled) { filter: brightness(1.06); }
+    .button:disabled { cursor: not-allowed; opacity: .46; }
+    .button.quiet { border-color: var(--line); color: var(--text); background: #22241f; }
+    .validation { min-height: 24px; padding-top: 5px; color: var(--error); font-size: .81rem; }
+    .validation.valid { color: var(--success); }
+    .action-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 6px; }
+    .action-row .button { flex: 1; }
+    .status { display: flex; gap: 10px; align-items: flex-start; margin-top: 15px; padding: 12px 13px; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font-size: .86rem; }
+    .status-mark { color: var(--success); font-weight: 800; }
+    .status[data-tone="error"] .status-mark { color: var(--error); }
+    .status[data-tone="working"] .status-mark { color: var(--accent); }
+    .instructions { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+    .instructions h2 { margin: 0 0 16px; font-size: .97rem; font-weight: 650; }
+    .steps { list-style: none; margin: 0; padding: 0; counter-reset: setup; }
+    .steps li { display: grid; grid-template-columns: 26px 1fr; gap: 11px; padding: 0 0 15px; color: var(--muted); font-size: .9rem; }
+    .steps li:last-child { padding-bottom: 0; }
+    .steps li::before { counter-increment: setup; content: counter(setup); display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid #504b3b; border-radius: 50%; color: var(--accent); font-size: .76rem; font-weight: 700; }
+    .steps strong { color: var(--text); font-weight: 620; }
+    .ios-tools { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 18px 0 2px; padding: 13px; border: 1px solid var(--line); border-radius: 9px; background: #151712; }
+    .ios-tools p { margin: 0; color: var(--muted); font-size: .86rem; }
+    .ios-tools a { flex: 0 0 auto; font-size: .86rem; }
+    .copy-line { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #11130f; }
+    .copy-line span { flex: 1; min-width: 0; overflow: hidden; color: var(--muted); font-size: .83rem; text-overflow: ellipsis; white-space: nowrap; }
+    .copy-line .button { min-height: 36px; padding: 0 12px; font-size: .82rem; }
+    .platform-panel[hidden] { display: none; }
+    footer { padding: 0 0 28px; color: #76796f; font-size: .78rem; }
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 24px, 760px); }
+      main { padding-top: 38px; }
+      .url-entry { display: grid; grid-template-columns: 1fr; }
+      .url-entry .button { width: 100%; }
+      .ios-tools { align-items: flex-start; flex-direction: column; gap: 7px; }
     }
-    @media (max-width: 470px) {
-      .shell { width: min(100% - 22px, 1080px); }
-      .input-row { display: block; }
-      .input-row button { width: 100%; margin-top: 10px; }
-      h1 { font-size: 2.7rem; }
+    @media (prefers-reduced-motion: no-preference) {
+      .setup { animation: appear .24s ease-out; }
+      @keyframes appear { from { opacity: .7; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
     }
   </style>
 </head>
 <body>
-  <div class="shell">
+  <div class="wrap">
     <header>
-      <a class="brand" href="./" aria-label="Watchmen NFC setup">
-        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 8a7 7 0 0 1 10 0M4.5 5.5a10.5 10.5 0 0 1 15 0M9.5 10.5a3.5 3.5 0 0 1 5 0M12 14v7"/></svg></span>
-        <span>WATCHMEN</span>
-      </a>
-      <span class="eyebrow">NFC SETUP</span>
+      <div class="wordmark">WATCHMEN</div>
+      <div class="header-label">NFC setup</div>
     </header>
-
     <main>
-      <section class="hero">
-        <h1 style="font-size:clamp(2.2rem, 6vw, 3.5rem); letter-spacing:-.045em">Watchmen NFC Setup</h1>
-        <p>Enter your link and follow the steps for your phone.</p>
+      <h1>Watchmen NFC Setup</h1>
+      <p class="intro">Choose your phone, enter a destination, and program your tag.</p>
+
+      <div class="platforms" role="tablist" aria-label="Phone type">
+        <button class="platform-tab" id="androidTab" type="button" role="tab" aria-selected="true" aria-controls="androidPanel">Android</button>
+        <button class="platform-tab" id="iphoneTab" type="button" role="tab" aria-selected="false" aria-controls="iphonePanel">iPhone</button>
+      </div>
+
+      <section class="setup" aria-label="NFC tag setup">
+        <h2 class="section-title">Destination link</h2>
+        <p class="section-copy">Enter the web address the tag should open. For LinkedIn, paste your profile URL.</p>
+        <label for="destination">URL</label>
+        <div class="url-entry">
+          <input id="destination" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com">
+          <button class="button" id="useLink" type="button">Use this link</button>
+        </div>
+        <div class="validation" id="validation" aria-live="polite"></div>
+
+        <div class="platform-panel" id="androidPanel" role="tabpanel" aria-labelledby="androidTab">
+          <div class="action-row">
+            <button class="button" id="writeButton" type="button" disabled>Write to NFC tag</button>
+            <button class="button quiet" id="testButton" type="button" disabled>Test link</button>
+          </div>
+          <div class="status" id="status" data-tone="ready" aria-live="polite">
+            <span class="status-mark" id="statusMark">●</span>
+            <span id="statusText">Enter a valid URL to begin.</span>
+          </div>
+          <div class="instructions">
+            <h2>Android instructions</h2>
+            <ol class="steps">
+              <li><span><strong>Open this page in Chrome</strong> on an Android phone with NFC enabled.</span></li>
+              <li><span>Enter a complete URL and tap <strong>Write to NFC tag</strong>.</span></li>
+              <li><span>Hold the tag near the back of the phone until the page confirms the write.</span></li>
+            </ol>
+            <p class="section-copy" id="androidFallback" hidden>This browser does not support web NFC. Try Chrome on Android or use NFC Tools.</p>
+          </div>
+        </div>
+
+        <div class="platform-panel" id="iphonePanel" role="tabpanel" aria-labelledby="iphoneTab" hidden>
+          <div class="copy-line"><span id="copyValue">Your URL will appear here</span><button class="button quiet" id="copyButton" type="button" disabled>Copy</button></div>
+          <div class="ios-tools">
+            <p>Install NFC Tools to write the tag from your iPhone.</p>
+            <a href="https://apps.apple.com/us/app/nfc-tools/id1252962749" target="_blank" rel="noreferrer">Get NFC Tools ↗</a>
+          </div>
+          <div class="instructions">
+            <h2>iPhone instructions</h2>
+            <ol class="steps">
+              <li><span>Copy the URL above. Open NFC Tools and tap <strong>Write</strong>.</span></li>
+              <li><span>Tap <strong>Add a record</strong>. Choose <strong>Social Network</strong> for LinkedIn, or <strong>URL / Web link</strong> for another link. Paste or enter the destination.</span></li>
+              <li><span>Tap <strong>Write</strong>, then scan the tag when NFC Tools asks you to.</span></li>
+            </ol>
+          </div>
+        </div>
       </section>
-
-      <div class="platform-picker" role="group" aria-label="Choose your phone type">
-        <button class="platform-choice" id="androidChoice" type="button" aria-pressed="true"><strong>Android</strong><span>Write the tag from this page</span></button>
-        <button class="platform-choice" id="iosChoice" type="button" aria-pressed="false"><strong>iPhone</strong><span>Use NFC Tools to write the tag</span></button>
-      </div>
-
-      <div class="layout">
-        <section class="card">
-          <h2>Enter your link</h2>
-          <p class="card-intro">Paste the destination you want the NFC tag to open, such as LinkedIn or a website.</p>
-          <label for="destination">Destination URL</label>
-          <div class="input-row">
-            <input id="destination" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com" value="https://">
-            <button id="validateButton" type="button">Use this link</button>
-          </div>
-          <div id="validation" class="validation" aria-live="polite"></div>
-          <div class="actions">
-            <button id="writeButton" type="button" disabled>Write NFC tag</button>
-            <button id="testButton" class="secondary" type="button" disabled>Test link</button>
-          </div>
-          <div id="status" class="status" data-tone="ready" aria-live="polite">
-            <div id="statusIcon" class="status-icon">✓</div>
-            <div><h3 id="statusTitle">Ready when you are</h3><p id="statusText">Add a valid URL to get started.</p></div>
-          </div>
-        </section>
-
-        <aside class="card">
-          <div id="androidPanel" class="platform-panel active">
-            <div class="platform-badge">◉ Android · write here</div>
-            <h2>Android setup</h2>
-            <div class="steps">
-              <div class="step"><div class="step-number">1</div><div><strong>Enter your destination</strong><span>Use the complete link, including https://.</span></div></div>
-              <div class="step"><div class="step-number">2</div><div><strong>Tap “Write to NFC tag”</strong><span>Tap the write button on this page.</span></div></div>
-              <div class="step"><div class="step-number">3</div><div><strong>Hold your tag near your phone</strong><span>Keep it still until you see confirmation.</span></div></div>
-            </div>
-            <p class="note" style="margin-top:24px">Turn on NFC. Tap “Write NFC tag” and hold the tag near the back of your phone.</p>
-            <p class="note">This page writes the tag directly in Chrome on supported Android phones.</p>
-          </div>
-
-          <div id="iosPanel" class="platform-panel">
-            <div class="platform-badge">● iPhone / iPad</div>
-            <h2>iPhone setup</h2>
-            <p class="card-intro">Copy the link below. In NFC Tools, add it as a LinkedIn social network or URL record.</p>
-            <div class="copy-box"><span id="copyValue">https://</span><button id="copyButton" type="button">Copy</button></div>
-            <div class="steps">
-              <div class="step"><div class="step-number">1</div><div><strong>Download NFC Tools</strong><span><a href="https://apps.apple.com/us/app/nfc-tools/id1252962749" target="_blank" rel="noreferrer">Open it in the App Store</a>.</span></div></div>
-              <div class="step"><div class="step-number">2</div><div><strong>Tap Write</strong><span>Open NFC Tools and choose the Write tab.</span></div></div>
-              <div class="step"><div class="step-number">3</div><div><strong>Add a record</strong><span>Choose Social Network for LinkedIn, or URL / Web link for another destination.</span></div></div>
-              <div class="step"><div class="step-number">4</div><div><strong>Tap Write, then scan</strong><span>Tap Write and hold the NFC tag near the top of your iPhone when the app asks.</span></div></div>
-            </div>
-            <button id="iosTestButton" class="secondary" type="button" disabled>Open link to test</button>
-          </div>
-
-          <div id="unsupportedPanel" class="platform-panel">
-            <div class="platform-badge">◇ Browser check</div>
-            <h2>Android browser support</h2>
-            <p class="card-intro">This browser can’t write NFC tags directly. On Android, open this page in the latest Chrome and make sure NFC is switched on.</p>
-            <p class="note">Or use <a href="https://play.google.com/store/apps/details?id=com.wakdev.wdnfc" target="_blank" rel="noreferrer">NFC Tools for Android</a> to write your link.</p>
-          </div>
-        </aside>
-      </div>
     </main>
-    <footer>Runs entirely in your browser · Your link stays on your device</footer>
+    <footer>Watchmen NFC Setup</footer>
   </div>
 
   <script>
     const destination = document.querySelector("#destination");
+    const useLink = document.querySelector("#useLink");
     const validation = document.querySelector("#validation");
-    const validateButton = document.querySelector("#validateButton");
+    const androidTab = document.querySelector("#androidTab");
+    const iphoneTab = document.querySelector("#iphoneTab");
+    const androidPanel = document.querySelector("#androidPanel");
+    const iphonePanel = document.querySelector("#iphonePanel");
     const writeButton = document.querySelector("#writeButton");
     const testButton = document.querySelector("#testButton");
-    const iosTestButton = document.querySelector("#iosTestButton");
-    const copyButton = document.querySelector("#copyButton");
-    const copyValue = document.querySelector("#copyValue");
     const status = document.querySelector("#status");
-    const statusIcon = document.querySelector("#statusIcon");
-    const statusTitle = document.querySelector("#statusTitle");
+    const statusMark = document.querySelector("#statusMark");
     const statusText = document.querySelector("#statusText");
-    const androidChoice = document.querySelector("#androidChoice");
-    const iosChoice = document.querySelector("#iosChoice");
-    const androidPanel = document.querySelector("#androidPanel");
-    const iosPanel = document.querySelector("#iosPanel");
-    const unsupportedPanel = document.querySelector("#unsupportedPanel");
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const androidFallback = document.querySelector("#androidFallback");
+    const copyValue = document.querySelector("#copyValue");
+    const copyButton = document.querySelector("#copyButton");
     const canWriteNfc = "NDEFReader" in window && window.isSecureContext;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    function selectPlatform(platform) {
-      const iosSelected = platform === "ios";
-      androidChoice.setAttribute("aria-pressed", String(!iosSelected));
-      iosChoice.setAttribute("aria-pressed", String(iosSelected));
-      androidPanel.classList.toggle("active", !iosSelected && canWriteNfc);
-      iosPanel.classList.toggle("active", iosSelected);
-      unsupportedPanel.classList.toggle("active", !iosSelected && !canWriteNfc);
-      writeButton.disabled = !iosSelected && (!canWriteNfc || !getUrl());
-      writeButton.textContent = canWriteNfc ? "Write NFC tag" : "NFC unavailable";
-    }
-
-
-    function getUrl() {
-      const value = destination.value.trim();
-      if (!value || value === "https://") return null;
+    function validUrl() {
       try {
-        const url = new URL(value);
-        if (!["http:", "https:"].includes(url.protocol) || !url.hostname) return null;
-        return url.href;
+        const parsed = new URL(destination.value.trim());
+        return ["https:", "http:"].includes(parsed.protocol) && parsed.hostname ? parsed.href : "";
       } catch {
-        return null;
+        return "";
       }
     }
 
-    function setStatus(title, message, tone = "ready", icon = "✓") {
+    function setStatus(message, tone = "ready") {
       status.dataset.tone = tone;
-      statusIcon.textContent = icon;
-      statusTitle.textContent = title;
+      statusMark.textContent = tone === "working" ? "◌" : tone === "error" ? "!" : "●";
       statusText.textContent = message;
     }
 
-    function refreshUrlState() {
-      const url = getUrl();
-      const hasText = destination.value.trim() && destination.value.trim() !== "https://";
-      validation.textContent = hasText && !url ? "Enter a valid http:// or https:// link." : "";
-      validation.classList.toggle("valid", Boolean(url));
-      if (url) {
-        validation.textContent = "Looks good — this link is ready.";
-        writeButton.disabled = !canWriteNfc || iosChoice.getAttribute("aria-pressed") === "true";
-        testButton.disabled = false;
-        iosTestButton.disabled = false;
-        copyValue.textContent = url;
-        setStatus("Ready to write", "Your destination is valid. Test it first or write it to your Watchmen tag.", "ready");
-      } else {
-        writeButton.disabled = true;
-        testButton.disabled = true;
-        iosTestButton.disabled = true;
-        copyValue.textContent = destination.value.trim() || "https://";
-        if (hasText) setStatus("Check your link", "Use a complete web address such as https://example.com.", "error", "!");
-        else setStatus("Ready when you are", "Add a valid URL to get started.", "ready");
-      }
+    function selectPlatform(platform) {
+      const isIphone = platform === "iphone";
+      androidTab.setAttribute("aria-selected", String(!isIphone));
+      iphoneTab.setAttribute("aria-selected", String(isIphone));
+      androidPanel.hidden = isIphone;
+      iphonePanel.hidden = !isIphone;
+      updateForm();
     }
 
-    function openDestination() {
-      const url = getUrl();
+    function updateForm() {
+      const url = validUrl();
+      const hasInput = destination.value.trim().length > 0;
+      validation.textContent = hasInput && !url ? "Enter a valid web address starting with http:// or https://." : "";
+      validation.classList.toggle("valid", Boolean(url));
+      if (url) {
+        validation.textContent = "Valid URL";
+        testButton.disabled = false;
+        writeButton.disabled = !canWriteNfc;
+        copyValue.textContent = url;
+        copyButton.disabled = false;
+      } else {
+        testButton.disabled = true;
+        writeButton.disabled = true;
+        copyValue.textContent = "Your URL will appear here";
+        copyButton.disabled = true;
+        if (hasInput) setStatus("Check the URL and try again.", "error");
+      }
+      if (!hasInput) setStatus("Enter a valid URL to begin.");
+      androidFallback.hidden = canWriteNfc;
+    }
+
+    function testLink() {
+      const url = validUrl();
       if (url) window.open(url, "_blank", "noopener,noreferrer");
     }
 
     async function writeTag() {
-      const url = getUrl();
-      if (!url) return refreshUrlState();
-      if (!canWriteNfc) {
-        setStatus("NFC writing unavailable", "Open this page in Chrome on Android, make sure NFC is switched on, and try again.", "error", "!");
+      const url = validUrl();
+      if (!url || !canWriteNfc) {
+        if (!canWriteNfc) setStatus("Web NFC is unavailable in this browser. Use Chrome on Android with NFC enabled.", "error");
         return;
       }
+      writeButton.disabled = true;
+      setStatus("Hold your NFC tag near the back of your phone.", "working");
       try {
-        setStatus("Hold your tag near your phone", "Keep the tag still while we write your destination.", "working", "◌");
-        writeButton.disabled = true;
-        const writer = new NDEFReader();
-        await writer.write({ records: [{ recordType: "url", data: url }] });
-        setStatus("Tag written successfully", "Your tag now opens the destination link.", "ready", "✓");
+        await new NDEFReader().write({ records: [{ recordType: "url", data: url }] });
+        setStatus("Tag written successfully.");
       } catch (error) {
-        const message = error && error.name === "NotAllowedError"
-          ? "NFC access was cancelled. Tap write again and allow access when prompted."
-          : error && error.name === "NotSupportedError"
-            ? "This tag could not be written. Try an NFC tag with enough space."
-            : "We couldn’t write this tag. Keep it close and try again.";
-        setStatus("Writing didn’t finish", message, "error", "!");
+        const detail = error?.name === "NotAllowedError"
+          ? "NFC permission was not granted. Tap write and allow access."
+          : error?.name === "NotSupportedError"
+            ? "The tag could not be written. Try a compatible NFC tag."
+            : "Could not write the tag. Keep it close and try again.";
+        setStatus(detail, "error");
       } finally {
-        refreshUrlState();
+        updateForm();
       }
     }
 
-    androidChoice.addEventListener("click", () => selectPlatform("android"));
-    iosChoice.addEventListener("click", () => selectPlatform("ios"));
-    validateButton.addEventListener("click", refreshUrlState);
-    destination.addEventListener("input", refreshUrlState);
-    testButton.addEventListener("click", openDestination);
-    iosTestButton.addEventListener("click", openDestination);
+    androidTab.addEventListener("click", () => selectPlatform("android"));
+    iphoneTab.addEventListener("click", () => selectPlatform("iphone"));
+    useLink.addEventListener("click", updateForm);
+    destination.addEventListener("input", updateForm);
+    testButton.addEventListener("click", testLink);
     writeButton.addEventListener("click", writeTag);
     copyButton.addEventListener("click", async () => {
-      const url = getUrl();
-      if (!url) return refreshUrlState();
+      const url = validUrl();
+      if (!url) return;
       try {
         await navigator.clipboard.writeText(url);
         copyButton.textContent = "Copied";
-        setTimeout(() => { copyButton.textContent = "Copy"; }, 1600);
+        setTimeout(() => { copyButton.textContent = "Copy"; }, 1400);
       } catch {
-        setStatus("Copy unavailable", "Select the link and copy it manually.", "error", "!");
+        setStatus("Copy was blocked. Select and copy the URL manually.", "error");
       }
     });
 
-    selectPlatform(isIOS ? "ios" : "android");
-    refreshUrlState();
+    selectPlatform(isIOS ? "iphone" : "android");
   </script>
 </body>
 </html>
