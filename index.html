@@ -77,7 +77,6 @@
       .wrap { width: min(100% - 24px, 760px); }
       main { padding-top: 38px; }
       .url-entry { display: grid; grid-template-columns: 1fr; }
-      .url-entry .button { width: 100%; }
       .ios-tools { align-items: flex-start; flex-direction: column; gap: 7px; }
     }
     @media (prefers-reduced-motion: no-preference) {
@@ -108,7 +107,6 @@
         <label for="destination" id="destinationLabel">URL to write</label>
         <div class="url-entry">
           <input id="destination" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com">
-          <button class="button" id="useLink" type="button">Check link</button>
         </div>
         <div class="validation" id="validation" aria-live="polite"></div>
           <div class="action-row">
@@ -148,7 +146,6 @@
 
   <script>
     const destination = document.querySelector("#destination");
-    const useLink = document.querySelector("#useLink");
     const validation = document.querySelector("#validation");
     const androidTab = document.querySelector("#androidTab");
     const iphoneTab = document.querySelector("#iphoneTab");
@@ -236,7 +233,6 @@
 
     androidTab.addEventListener("click", () => selectPlatform("android"));
     iphoneTab.addEventListener("click", () => selectPlatform("iphone"));
-    useLink.addEventListener("click", updateForm);
     destination.addEventListener("input", updateForm);
     testButton.addEventListener("click", testLink);
     writeButton.addEventListener("click", writeTag);
