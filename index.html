@@ -136,15 +136,15 @@
 
         <aside class="card">
           <div id="androidPanel">
-            <div class="platform-badge">◉ Android setup</div>
-            <h2>Write in three steps</h2>
+            <div class="platform-badge">◉ Android · write here</div>
+            <h2>Write directly from this page</h2>
             <div class="steps">
               <div class="step"><div class="step-number">1</div><div><strong>Enter your destination</strong><span>Use the complete link, including https://.</span></div></div>
-              <div class="step"><div class="step-number">2</div><div><strong>Tap “Write to NFC tag”</strong><span>Allow NFC access if your browser asks.</span></div></div>
+              <div class="step"><div class="step-number">2</div><div><strong>Tap “Write to NFC tag”</strong><span>This page will open Android’s NFC writer in Chrome.</span></div></div>
               <div class="step"><div class="step-number">3</div><div><strong>Hold your tag near your phone</strong><span>Keep it still until you see confirmation.</span></div></div>
             </div>
-            <p class="note" style="margin-top:24px">Best supported in Chrome on Android. Make sure NFC is switched on.</p>
-            <p class="note">Need an app? <a href="https://play.google.com/store/apps/details?id=com.wakdev.wdnfc" target="_blank" rel="noreferrer">Get NFC Tools for Android</a>.</p>
+            <p class="note" style="margin-top:24px">Use Chrome on Android over HTTPS. Turn on NFC, tap the button, and hold the tag near the back of your phone.</p>
+            <p class="note">No separate app is needed. <a href="https://play.google.com/store/apps/details?id=com.wakdev.wdnfc" target="_blank" rel="noreferrer">NFC Tools is an optional fallback</a> for unsupported devices.</p>
           </div>
 
           <div id="iosPanel" class="ios-panel">
@@ -243,7 +243,7 @@
       const url = getUrl();
       if (!url) return refreshUrlState();
       if (!canWriteNfc) {
-        setStatus("NFC writing unavailable", "Use Chrome on Android over HTTPS with NFC switched on.", "error", "!");
+        setStatus("NFC writing unavailable", "Open this page in Chrome on Android, make sure NFC is switched on, and try again.", "error", "!");
         return;
       }
       try {
