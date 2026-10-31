@@ -107,10 +107,10 @@
       <section class="setup" aria-label="NFC tag setup">
         <h2 class="section-title">Destination link</h2>
         <p class="section-copy">Enter the web address the tag should open. Use this same link for Android or iPhone; for LinkedIn, paste your profile URL.</p>
-        <label for="destination">URL</label>
+        <label for="destination" id="destinationLabel">URL to write</label>
         <div class="url-entry">
           <input id="destination" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com">
-          <button class="button" id="useLink" type="button">Use this link</button>
+          <button class="button" id="useLink" type="button">Check link</button>
         </div>
         <div class="validation" id="validation" aria-live="polite"></div>
 
@@ -135,15 +135,14 @@
         </div>
 
         <div class="platform-panel" id="iphonePanel" role="tabpanel" aria-labelledby="iphoneTab" hidden>
-          <div class="copy-line"><span id="copyValue">Your URL will appear here</span><button class="button quiet" id="copyButton" type="button" disabled>Copy</button></div>
           <div class="ios-tools">
-            <p>Install NFC Tools to write the tag from your iPhone.</p>
+            <p>This page cannot write NFC tags on iPhone. Enter your destination above, tap <strong>Copy URL</strong>, then paste it into NFC Tools.</p>
             <a href="https://apps.apple.com/us/app/nfc-tools/id1252962749" target="_blank" rel="noreferrer">Get NFC Tools ↗</a>
           </div>
           <div class="instructions">
             <h2>iPhone instructions</h2>
             <ol class="steps">
-              <li><span>Use the URL above. Open NFC Tools and tap <strong>Write</strong>.</span></li>
+              <li><span>Tap <strong>Copy URL</strong> above. Open NFC Tools and tap <strong>Write</strong>.</span></li>
               <li><span>Tap <strong>Add a record</strong>. Choose <strong>Social Network</strong> for LinkedIn, or <strong>URL / Web link</strong> for another link. Paste or enter the destination.</span></li>
               <li><span>Tap <strong>Write</strong>, then scan the tag when NFC Tools asks you to.</span></li>
             </ol>
@@ -168,8 +167,7 @@
     const statusMark = document.querySelector("#statusMark");
     const statusText = document.querySelector("#statusText");
     const androidFallback = document.querySelector("#androidFallback");
-    const copyValue = document.querySelector("#copyValue");
-    const copyButton = document.querySelector("#copyButton");
+    const destinationLabel = document.querySelector("#destinationLabel");
     const canWriteNfc = "NDEFReader" in window && window.isSecureContext;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
@@ -194,6 +192,8 @@
       iphoneTab.setAttribute("aria-selected", String(isIphone));
       androidPanel.hidden = isIphone;
       iphonePanel.hidden = !isIphone;
+      destinationLabel.textContent = isIphone ? "Link to copy into NFC Tools" : "URL to write";
+      useLink.textContent = isIphone ? "Copy URL" : "Check link";
       updateForm();
     }
 
@@ -206,13 +206,10 @@
         validation.textContent = "Valid URL";
         testButton.disabled = false;
         writeButton.disabled = !canWriteNfc;
-        copyValue.textContent = url;
-        copyButton.disabled = false;
+
       } else {
         testButton.disabled = true;
         writeButton.disabled = true;
-        copyValue.textContent = "Your URL will appear here";
-        copyButton.disabled = true;
         if (hasInput) setStatus("Check the URL and try again.", "error");
       }
       if (!hasInput) setStatus("Enter a valid URL to begin.");
@@ -249,21 +246,24 @@
 
     androidTab.addEventListener("click", () => selectPlatform("android"));
     iphoneTab.addEventListener("click", () => selectPlatform("iphone"));
-    useLink.addEventListener("click", updateForm);
+    useLink.addEventListener("click", async () => {
+      updateForm();
+      const url = validUrl();
+      if (!url) return;
+      if (iphoneTab.getAttribute("aria-selected") === "true") {
+        try {
+          await navigator.clipboard.writeText(url);
+          validation.textContent = "Copied. Open NFC Tools and paste the URL into a record.";
+          validation.classList.add("valid");
+        } catch {
+          validation.textContent = "Copy was blocked. Select and copy the URL, then paste it into NFC Tools.";
+        }
+      }
+    });
     destination.addEventListener("input", updateForm);
     testButton.addEventListener("click", testLink);
     writeButton.addEventListener("click", writeTag);
-    copyButton.addEventListener("click", async () => {
-      const url = validUrl();
-      if (!url) return;
-      try {
-        await navigator.clipboard.writeText(url);
-        copyButton.textContent = "Copied";
-        setTimeout(() => { copyButton.textContent = "Copy"; }, 1400);
-      } catch {
-        setStatus("Copy was blocked. Select and copy the URL manually.", "error");
-      }
-    });
+;
 
     selectPlatform(isIOS ? "iphone" : "android");
   </script>
