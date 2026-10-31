@@ -106,7 +106,7 @@
 
       <section class="setup" aria-label="NFC tag setup">
         <h2 class="section-title">Destination link</h2>
-        <p class="section-copy">Enter the web address the tag should open. For LinkedIn, paste your profile URL.</p>
+        <p class="section-copy">Enter the web address the tag should open. Use this same link for Android or iPhone; for LinkedIn, paste your profile URL.</p>
         <label for="destination">URL</label>
         <div class="url-entry">
           <input id="destination" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com">
@@ -130,7 +130,7 @@
               <li><span>Enter a complete URL and tap <strong>Write to NFC tag</strong>.</span></li>
               <li><span>Hold the tag near the back of the phone until the page confirms the write.</span></li>
             </ol>
-            <p class="section-copy" id="androidFallback" hidden>This browser does not support web NFC. Try Chrome on Android or use NFC Tools.</p>
+            <div class="ios-tools" id="androidFallback"><p>If writing from this page doesn’t work, use NFC Tools on Android.</p><a href="https://play.google.com/store/apps/details?id=com.wakdev.wdnfc" target="_blank" rel="noreferrer">Get NFC Tools ↗</a></div>
           </div>
         </div>
 
@@ -143,7 +143,7 @@
           <div class="instructions">
             <h2>iPhone instructions</h2>
             <ol class="steps">
-              <li><span>Copy the URL above. Open NFC Tools and tap <strong>Write</strong>.</span></li>
+              <li><span>Use the URL above. Open NFC Tools and tap <strong>Write</strong>.</span></li>
               <li><span>Tap <strong>Add a record</strong>. Choose <strong>Social Network</strong> for LinkedIn, or <strong>URL / Web link</strong> for another link. Paste or enter the destination.</span></li>
               <li><span>Tap <strong>Write</strong>, then scan the tag when NFC Tools asks you to.</span></li>
             </ol>
@@ -216,7 +216,7 @@
         if (hasInput) setStatus("Check the URL and try again.", "error");
       }
       if (!hasInput) setStatus("Enter a valid URL to begin.");
-      androidFallback.hidden = canWriteNfc;
+      androidFallback.hidden = false;
     }
 
     function testLink() {
